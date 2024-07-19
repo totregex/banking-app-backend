@@ -1,12 +1,31 @@
 const Fd = require("../models/fdSchema");
 const User = require("../models/userSchema");
+const bcrypt = require("bcrypt");
+const Joi = require("joi-browser");
 
 module.exports = async (req, res) => {
   const { interest, amount, minTime, maxTime, pin, nominee, age } = req.body;
 
-  if (!amount || !nominee) {
-    return res.status(400).json({ message: "Please fill the credentials correctly." });
-  }
+  // if (!amount || !nominee) {
+  //   return res.status(400).json({ message: "Please fill the credentials correctly." });
+  // }
+
+  const schema = {
+    amount: Joi.number().integer().min(1).required().label("Amount"),
+    minTime: Joi.string().required().label("Min Duration"),
+    maxTime: Joi.string().required().label("Max Duration"),
+    interest: Joi.string().required().label("Interest"),
+    age: Joi.number().required().label("Age"),
+    nominee: Joi.string().required().label("Nominee"),
+    pin: Joi.string().required().label("PIN"),
+  };
+
+  const isMatchPIN = bcrypt.compare(pin, req.user.pin);
+
+  if (!isMatchPIN) return res.status(400).send("Invalid PIN");
+
+  const { error } = Joi.validate(req.body, schema);
+  if (error) return res.status(400).send(error.details[0].message);
 
   if (req.user.bankBalance <= amount) {
     return res.status(400).send("Insufficient bank balance");

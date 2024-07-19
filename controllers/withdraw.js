@@ -1,9 +1,10 @@
 const User = require("../models/userSchema");
 const Transaction = require("../models/transaction");
 const bcrypt = require("bcrypt");
+const Joi = require("joi-browser");
 
 module.exports = async (req, res) => {
-  const { pin, amount } = req.body;
+  const { accountNumber, pin, amount } = req.body;
 
   // if (!pin || !amount) {
   //   return res.json({
@@ -12,19 +13,37 @@ module.exports = async (req, res) => {
   //   });
   // }
 
+  const schema = {
+    accountNumber: Joi.string().required().label("Account Number"),
+    pin: Joi.string().required().label("PIN"),
+    amount: Joi.number()
+      .integer()
+      .min(1)
+      .max(100000)
+      .required()
+      .label("Amount"),
+  };
+
+  const { error } = Joi.validate(req.body, schema);
+  if (error) return res.status(400).send(error.details[0].message);
+
   const userExist = await User.findOne({ email: req.user.email });
-//   console.log(userExist);
+  //   console.log(userExist);
+  
+  if (!userExist || userExist?.accountNumber !== accountNumber)
+    return res.status(400).send("User doesn't exist");
 
-  if (!userExist) res.status(404).send("User doesn't exist");
-
-//   console.log(userExist.pin);
+  //   console.log(userExist.pin);
   const ifMatch = await bcrypt.compare(pin, userExist.pin);
   // console.log(req.authuser.email);
   // console.log(ifMatch);
+
   if (!ifMatch) {
     return res.status(400).send("Pin does not match!");
   }
-  if (amount > userExist.bankBalance) { return res.status(400).send("Insufficient bank balance");}
+  if (amount > userExist.bankBalance) {
+    return res.status(400).send("Insufficient bank balance");
+  }
 
   res.send(`Transaction is successful and Rs.${amount} has been withdrawaled`);
 

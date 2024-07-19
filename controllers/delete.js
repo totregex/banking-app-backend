@@ -1,5 +1,4 @@
 const User = require("../models/userSchema");
-const FD = require('../models/fdSchema')
 const Transaction = require("../models/transaction");
 
 module.exports = async (req, res) => {

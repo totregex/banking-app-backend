@@ -1,24 +1,47 @@
 const fdSchema = require("../models/fdSchema");
 const userSchema = require("../models/userSchema");
+const bcrypt = require("bcrypt");
+const Joi = require("joi-browser");
 
 module.exports = async (req, res) => {
-  const { accountNumber, token } = req.body;
+  const { accountNumber, token, pin } = req.body;
 
   // console.log(req.body.data);
+  const schema = {
+    accountNumber: Joi.string().required().label("Account Number"),
+    token: Joi.string().required().label("Token"),
+    pin: Joi.string().required().label("PIN"),
+  };
 
-  if (!accountNumber || !token) {
-    res.json({ error: "fills credentials properly." });
+  const { error } = Joi.validate(req.body, schema);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  // if (!accountNumber || !token) {
+  //   res.json({ error: "fills credentials properly." });
+  // }
+
+  const fduser = await fdSchema.findOne({
+    accountNumber: accountNumber,
+    token: Number(token),
+  });
+
+  // console.log("FD USER ", fduser)
+
+  if (!fduser) {
+    return res.status(404).send("Invalid token");
   }
 
-  const fduser = await fdSchema.findOne({ accountNumber: accountNumber, token: Number(token) });
+  // console.log(pin, fduser.pin)
 
-  if(!fduser){
-    return res.status(404).send("Invalid token")
-  }
-//   console.log(fduser[0].name);
+  const isMatchPIN = await bcrypt.compare(pin, req.user.pin);
+
+  // console.log(isMatchPIN)
+  if (!isMatchPIN) return res.status(400).send("Invalid PIN");
+
+  //   console.log(fduser[0].name);
   const i = fduser.interest;
-  const minT = fduser.min;
-  const maxT = fduser.max;
+  const minT = fduser.minTime;
+  const maxT = fduser.maxTime;
   let amount = fduser.amount;
   const date = fduser.fdDate;
 
@@ -26,37 +49,42 @@ module.exports = async (req, res) => {
   const minute = 1000 * 60;
   const hour = minute * 60;
   const day = hour * 24;
-//   const year = day * 365;
+  //   const year = day * 365;
 
   const time = currentDate.getTime() - date.getTime();
-  const depositTime = time/day;
+  const depositTime = time / day;
   console.log(depositTime);
 
-  if(depositTime < minT){
-    return res.status(400).send("Your fd deposit time is not completed.");
+  if (depositTime < minT) {
+    return res.status(400).send("FD period has not yet completed.");
   }
 
-  if(depositTime < maxT){
-    amount = amount*i*(depositTime);
+  if (depositTime < maxT) {
+    amount = amount * i * depositTime;
   }
 
-//   console.log("P1");
-  if(depositTime >= maxT){
-    amount = amount*i*maxT;
+  //   console.log("P1");
+  if (depositTime >= maxT) {
+    amount = amount * i * maxT;
   }
-
 
   res.send("successful withdrawal");
-  
-  const updateUser = await userSchema.updateOne({accountNumber: accountNumber}, {
-    $set: {
-        bankBalance: Number(req.authuser.bankBalance + amount)
+
+  const updateUser = await userSchema.updateOne(
+    { accountNumber: accountNumber },
+    {
+      $set: {
+        bankBalance: Number(req.authuser.bankBalance + amount),
+      },
     }
-  });
+  );
 
   console.log(updateUser);
 
-  const deleteUser = await fdSchema.deleteOne({accountNumber: accountNumber, token: token});
+  const deleteUser = await fdSchema.deleteOne({
+    accountNumber: accountNumber,
+    token: token,
+  });
 
   console.log(deleteUser);
 };

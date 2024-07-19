@@ -19,13 +19,6 @@ const userSchema = new mongoose.Schema({
     upperCase: true,
     Symbol: true,
   },
-  cPassword: {
-    type: String,
-    required: true,
-    lowerCase: true,
-    upperCase: true,
-    Symbol: true,
-  },
   age: {
     type: Number,
     required: true,
@@ -103,8 +96,6 @@ userSchema.pre("save", async function (next) {
   if (this.isModified("password")) {
     let newPassword = this.password.toString();
     this.password = await bcrypt.hash(newPassword, 12);
-    let newCpassword = this.cPassword.toString();
-    this.cPassword = await bcrypt.hash(newCpassword, 12);
     // let newpin = this.pin.toString();
     // this.pin = await bcrypt.hash(newpin, 10);
   }
