@@ -20,7 +20,7 @@ module.exports = async (req, res) => {
     pin: Joi.string().required().label("PIN"),
   };
 
-  const isMatchPIN = bcrypt.compare(pin, req.user.pin);
+  const isMatchPIN = await bcrypt.compare(pin, req.user.pin);
 
   if (!isMatchPIN) return res.status(400).send("Invalid PIN");
 
