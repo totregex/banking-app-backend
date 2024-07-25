@@ -28,9 +28,9 @@ module.exports = async (req, res) => {
   // console.log("FD USER ", fduser)
 
   if (!fduser) {
-    return res.status(404).send("Invalid token");
+    return res.status(404).send("Invalid account or token");
   }
-
+  
   // console.log(pin, fduser.pin)
 
   const isMatchPIN = await bcrypt.compare(pin, req.user.pin);
