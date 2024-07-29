@@ -30,8 +30,8 @@ module.exports = async (req, res) => {
   const schema = {
     name: Joi.string().min(3).max(30).required().label("Name"),
     email: Joi.string().email().required().label("Email Address"),
-    password: Joi.string().min(4).required().label("Password"),
-    cPassword: Joi.string().min(4).required().label("Confirm Password"),
+    password: Joi.string().min(6).regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*[@$%#^&*])(?=.*[0-9]).{6,}$/).required().label("Password"),
+    cPassword: Joi.string().min(6).required().label("Confirm Password"),
     age: Joi.number().integer().min(18).max(120).required().label("Age"),
     gender: Joi.string().required().label("Gender"),
     DOB: Joi.date().required().label("DOB"),
@@ -47,10 +47,10 @@ module.exports = async (req, res) => {
     accountType: Joi.string().required().label("Account Type"),
     bankName: Joi.string().min(3).max(50).required().label("Bank Name")
   };
-  console.log(req.body)
+  // console.log(req.body)
   // Validation
   const { error } = Joi.validate(req.body, schema);
-  if (error) return res.status(400).send(error.details[0].message);
+  if (error) return res.status(400).send("Password should contain minimum 6 characters, 1 uppercase, 1 lowercase, 1 symbol (@$%#^&*), 1 number (0-9).");
 
   // Check for duplicates
   const emailDuplicate = await User.findOne({ email: email });

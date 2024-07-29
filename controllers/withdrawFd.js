@@ -27,6 +27,7 @@ module.exports = async (req, res) => {
 
   // console.log("FD USER ", fduser)
 
+
   if (!fduser) {
     return res.status(404).send("Invalid account or token");
   }
@@ -43,7 +44,7 @@ module.exports = async (req, res) => {
   const minT = fduser.minTime;
   const maxT = fduser.maxTime;
   let amount = fduser.amount;
-  const date = fduser.fdDate;
+  const date = new Date(fduser.fdDate);
 
   const currentDate = new Date();
   const minute = 1000 * 60;
@@ -67,6 +68,7 @@ module.exports = async (req, res) => {
   if (depositTime >= maxT) {
     amount = amount * i * maxT;
   }
+  amount = Math.floor(amount)
 
   res.send("successful withdrawal");
 
@@ -74,7 +76,7 @@ module.exports = async (req, res) => {
     { accountNumber: accountNumber },
     {
       $set: {
-        bankBalance: Number(req.authuser.bankBalance + amount),
+        bankBalance: Number(req.user.bankBalance + amount),
       },
     }
   );
@@ -85,6 +87,5 @@ module.exports = async (req, res) => {
     accountNumber: accountNumber,
     token: token,
   });
-
   console.log(deleteUser);
 };
