@@ -22,7 +22,7 @@ module.exports = async (req, res) => {
 
   const isMatchPIN = await bcrypt.compare(pin, req.user.pin);
 
-  if (!isMatchPIN) return res.status(400).send("Invalid PIN");
+  if (!isMatchPIN) return res.status(400).send("Wrong PIN");
 
   const { error } = Joi.validate(req.body, schema);
   if (error) return res.status(400).send(error.details[0].message);

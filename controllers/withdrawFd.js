@@ -37,7 +37,7 @@ module.exports = async (req, res) => {
   const isMatchPIN = await bcrypt.compare(pin, req.user.pin);
 
   // console.log(isMatchPIN)
-  if (!isMatchPIN) return res.status(400).send("Invalid PIN");
+  if (!isMatchPIN) return res.status(400).send("You’ve entered the wrong PIN");
 
   //   console.log(fduser[0].name);
   const i = fduser.interest;

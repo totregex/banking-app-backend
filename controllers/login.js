@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
     if(!userLogin){
         return res.status(400).send("User not registered")
     }
-    const isMatch = await bcrypt.compare(password, userLogin.password); //for comparing the user entered password with the stored encrypted password
+    const isMatch = await bcrypt.compare(password, userLogin.password);
 
     if (!isMatch) {
       return res.status(400).send("Incorrect password");

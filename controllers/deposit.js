@@ -24,7 +24,7 @@ module.exports = async (req, res) => {
   console.log(userExist.pin);
   const ifMatch = await bcrypt.compare(pin, userExist.pin);
 
-  if (!ifMatch) return res.status(400).send("Pin does not match");
+  if (!ifMatch) return res.status(400).send("Incorrect PIN");
 
   res.send(`Transaction successful and Rs.${amount} deposited.`);
 
