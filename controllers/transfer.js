@@ -62,18 +62,18 @@ module.exports = async (req, res) => {
     const senderName = currentUser.name;
     const senderEmail = currentUser.email;
     const senderAccountNo = currentUser.accountNumber;
-    const recieverName = userToTransfer.name;
-    const recieverEmail = userToTransfer.email;
-    const recieverAccountNo = userToTransfer.accountNumber;
+    const receiverName = userToTransfer.name;
+    const receiverEmail = userToTransfer.email;
+    const receiverAccountNo = userToTransfer.accountNumber;
     const transactionType = "transfer";
 
     const transaction = new Transaction({
       senderName,
       senderEmail,
       senderAccountNo,
-      recieverName,
-      recieverEmail,
-      recieverAccountNo,
+      receiverName,
+      receiverEmail,
+      receiverAccountNo,
       amount,
       transactionType,
     });

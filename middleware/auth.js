@@ -11,14 +11,14 @@ const Auth = async (req, res, next) => {
       token,
       process.env.SECRET_KEY
     );
-    console.log(verifyUser);
+    // console.log(verifyUser);
     const authuser = await userSchema.findOne({
       _id: verifyUser._id,
     });
     if (!authuser) {
       res.status(401).send("User not logged in!")
     }
-    console.log(authuser)
+    // console.log(authuser)
     req.user = authuser;
     // console.log(authuser);
     next();

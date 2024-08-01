@@ -10,13 +10,13 @@ const transactionSchema = new mongoose.Schema([{
     senderAccountNo: {
         type: String
     },
-    recieverName: {
+    receiverName: {
         type: String
     },
-    recieverEmail:{
+    receiverEmail:{
         type: String
     },
-    recieverAccountNo: {
+    receiverAccountNo: {
         type: String
     },
     amount: {

@@ -3,7 +3,6 @@ const User = require("../models/userSchema");
 const Joi = require('joi-browser')
 
 module.exports = async (req, res) => {
-    // setting values
     const { email, password, accountNumber } = req.body;
 
     schema = {
@@ -22,9 +21,9 @@ module.exports = async (req, res) => {
     const { error } = Joi.validate(req.body, schema);
     if (error) return res.status(400).send(error.details[0].message);
 
-    console.log(req.body)
+    // console.log(req.body)
     const userLogin = await User.findOne({ email: email });
-    console.log(userLogin)
+    // console.log(userLogin)
 
     if(!userLogin){
         return res.status(400).send("User not registered")
