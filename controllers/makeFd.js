@@ -12,9 +12,9 @@ module.exports = async (req, res) => {
 
   const schema = {
     amount: Joi.number().integer().min(1).required().label("Amount"),
-    minTime: Joi.string().required().label("Min Duration"),
-    maxTime: Joi.string().required().label("Max Duration"),
-    interest: Joi.string().required().label("Interest"),
+    minTime: Joi.number().required().label("Min Duration"),
+    maxTime: Joi.number().required().label("Max Duration"),
+    interest: Joi.number().required().label("Interest"),
     age: Joi.number().required().label("Age"),
     nominee: Joi.string().required().label("Nominee"),
     pin: Joi.string().required().label("PIN"),
