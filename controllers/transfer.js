@@ -12,7 +12,7 @@ module.exports = async (req, res) => {
     amount: Joi.number().min(1).max(100000).required().label("Amount"),
     bankName: Joi.string().required().label("Bank Name"),
   };
-
+  
   const { error } = Joi.validate(req.body, schema);
   if (error) return res.status(400).send(error.details[0].message);
 

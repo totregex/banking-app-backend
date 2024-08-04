@@ -39,16 +39,18 @@ module.exports = async (req, res) => {
     panCard: Joi.string().length(10).required().label("PAN Card"),
     PhoneNo: Joi.string().length(10).regex(/^[0-9]+$/).required().label("Phone Number"),
     FatherName: Joi.string().min(3).max(30).required().label("Father's Name"),
-    pin: Joi.string().min(3).max(4).regex(/^[0-9]+$/).required().label("PIN"),
+    pin: Joi.string().min(4).max(10).regex(/^[0-9]+$/).required().label("PIN"),
     city: Joi.string().min(2).max(50).required().label("City"),
     state: Joi.string().min(2).max(50).required().label("State"),
     country: Joi.string().min(2).max(50).required().label("Country"),
-    bankBalance: Joi.number().min(0).required().label("Bank Balance"),
+    bankBalance: Joi.number().min(3000).required().label("Bank Balance"),
     accountType: Joi.string().required().label("Account Type"),
     bankName: Joi.string().min(3).max(50).required().label("Bank Name")
   };
+
   // console.log(req.body)
   // Validation
+
   const { error } = Joi.validate(req.body, schema);
   if (error) return res.status(400).send("Password should contain minimum 6 characters, 1 uppercase, 1 lowercase, 1 symbol (@$%#^&*), 1 number (0-9).");
 
