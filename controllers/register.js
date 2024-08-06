@@ -51,8 +51,9 @@ module.exports = async (req, res) => {
   // console.log(req.body)
   // Validation
 
+
   const { error } = Joi.validate(req.body, schema);
-  if (error) return res.status(400).send("Password should contain minimum 6 characters, 1 uppercase, 1 lowercase, 1 symbol (@$%#^&*), 1 number (0-9).");
+  if (error) return res.status(400).send(error.details[0].message);
 
   // Check for duplicates
   const emailDuplicate = await User.findOne({ email: email });
