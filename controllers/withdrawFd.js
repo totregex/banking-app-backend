@@ -61,12 +61,12 @@ module.exports = async (req, res) => {
   }
 
   if (depositTime < maxT) {
-    amount = amount * i * depositTime;
+    amount = amount + amount * i * depositTime;
   }
 
   //   console.log("P1");
   if (depositTime >= maxT) {
-    amount = amount * i * maxT;
+    amount = amount + amount * i * maxT;
   }
   amount = Math.floor(amount)
 
